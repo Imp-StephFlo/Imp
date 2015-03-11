@@ -27,7 +27,7 @@ switch($action)
         include "./vues/recherche.php";
         break;
     default :
-        include "./vues/notfound.php";
+        include "./vues/accueil.php";
         break;
 }//fin switch
 include ("./vues/pied.php");
