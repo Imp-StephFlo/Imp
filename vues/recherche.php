@@ -30,13 +30,13 @@ include('./include/verification.inc.php');
               <div class="h1">Recherche d'un document</div>
                   <br />
                   <div class="content_statL"> 
-                      <form action='rechercher.php<?php echo $code;?>' method='POST'>
+                      <form action='index.php?action=rechercher<?php echo $code;?>' method='POST'>
                         <input type='search' id='titreD' name='titre' placeholder='Veuillez entrer un titre'/>
                         <input type="submit" id="valider" value="Rechercher"/>
                       </form>
 <?php                      
                   
-                    if (isset ($_POST['titre']) and $Code!="" and $_POST['titre']!="" ) //On vérifie si le formulaire a été valider (envoie du titre et du code
+                    if (isset ($_POST['titre']) and $_POST['titre']!="" ) //On vérifie si le formulaire a été valider (envoie du titre et du code
                     {
                         //On récupére la valeur du formulaire
                         $recherche=$_POST['titre'];
