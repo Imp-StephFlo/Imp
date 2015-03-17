@@ -1,17 +1,4 @@
 <?php
-
-//include
-    include('./util/dbconnect.php');
-    
-//Connexion à la base de donné
-
-    $resDbImp = mysql_connect(
-            $_SESSION["SERVEUR_SQL"], 
-            $_SESSION["COMPTE_BASE"], 
-            $_SESSION["PSWD_BASE"]) 
-            or die(mysql_error());
-            mysql_select_db($_SESSION["NOM_BASE"], $resDbImp) or die(mysql_error()); 
-            
 //Fonction qui vas permette la vérification de code utilisateur dans la base de donnée Mysql
 function verifCode ($Code)
 {
@@ -145,7 +132,6 @@ function statPerso($strCode,$periode)
 
 function StatMoyen($periode)
 {
-    
     if($periode=="mois")// moyenne par mois des impressions 
     {
         
@@ -170,7 +156,7 @@ function StatMoyen($periode)
             {
             die('Requête invalide : ' . mysql_error());
             }
-            
+       
         return $resultMoyenne;
           
     }
@@ -215,18 +201,15 @@ function StatMoyen($periode)
                     {
                     die('Requête invalide : ' . mysql_error());
                     }
-
                 return $resultMoyenne;
-
+ 
             }
     
 }
 
 //Création de graphique avec une courbe et deux tableaux (abscisse et ordonnée)
-function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph )
-        
+function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph, $periode)
     {
-    //echo(getcwd());echo "./images/".$nomGraph.".png";
         //Construction du graphique
         $myData = new pData();
         /* Save the data in the pData array */
@@ -253,14 +236,14 @@ function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph )
 
         $myPicture->setShadow(TRUE, array("X" => 1, "Y" => 1, "R" => 50, "G" => 50, "B" => 50, "Alpha" => 20));
 
-        $myPicture->setFontProperties(array("FontName" => "./pChart/fonts/Forgotte.ttf", "FontSize" => 14));
+        $myPicture->setFontProperties(array("FontName" => "../pChart/fonts/Forgotte.ttf", "FontSize" => 14));
         $TextSettings = array("Align" => TEXT_ALIGN_TOPMIDDLE
             , "R" => 0, "G" => 0, "B" => 0, "DrawBox" => 1, "BoxAlpha" => 30);
         $myPicture->drawText(462, 25, "Nombre de pages imprimées", $TextSettings); //TITRE DU GRAPH
 
         $myPicture->setShadow(FALSE);
         $myPicture->setGraphArea(50, 50, 899, 360);
-        $myPicture->setFontProperties(array("R" => 0, "G" => 0, "B" => 0, "FontName" => "./pChart/fonts/pf_arma_five.ttf", "FontSize" => 8));
+        $myPicture->setFontProperties(array("R" => 0, "G" => 0, "B" => 0, "FontName" => "../pChart/fonts/pf_arma_five.ttf", "FontSize" => 8));
 
         $Settings = array("Pos" => SCALE_POS_LEFTRIGHT
             , "Mode" => SCALE_MODE_FLOATING
@@ -273,14 +256,12 @@ function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph )
         $Config = array("DisplayValues" => 1);
         $myPicture->drawSplineChart($Config);
 
-        $Config = array("FontR" => 0, "FontG" => 0, "FontB" => 0, "FontName" => "./pChart/fonts/pf_arma_five.ttf", "FontSize" => 8, "Margin" => 6, "Alpha" => 30, "BoxSize" => 5, "Style" => LEGEND_NOBORDER
+        $Config = array("FontR" => 0, "FontG" => 0, "FontB" => 0, "FontName" => "../pChart/fonts/pf_arma_five.ttf", "FontSize" => 8, "Margin" => 6, "Alpha" => 30, "BoxSize" => 5, "Style" => LEGEND_NOBORDER
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(752, 16, $Config);
 
-        $myPicture->Render("./images/".$nomGraph.".png");
-
-
+        $myPicture->Render("../images/".$nomGraph.$periode.".png");
     }
 
     //Création d'un graphique avec 2 courbes et donc 3 tableaux
@@ -317,14 +298,14 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
 
         $myPicture->setShadow(TRUE, array("X" => 1, "Y" => 1, "R" => 50, "G" => 50, "B" => 50, "Alpha" => 20));
 
-        $myPicture->setFontProperties(array("FontName" => "./pChart/fonts/Forgotte.ttf", "FontSize" => 14));
+        $myPicture->setFontProperties(array("FontName" => "../pChart/fonts/Forgotte.ttf", "FontSize" => 14));
         $TextSettings = array("Align" => TEXT_ALIGN_TOPMIDDLE
             , "R" => 0, "G" => 0, "B" => 0, "DrawBox" => 1, "BoxAlpha" => 30);
         $myPicture->drawText(512, 25, "Nombre de pages imprimées", $TextSettings); //TITRE DU GRAPH
 
         $myPicture->setShadow(FALSE);
         $myPicture->setGraphArea(50, 50, 999, 360);
-        $myPicture->setFontProperties(array("R" => 0, "G" => 0, "B" => 0, "FontName" => "./pChart/fonts/pf_arma_five.ttf", "FontSize" => 8));
+        $myPicture->setFontProperties(array("R" => 0, "G" => 0, "B" => 0, "FontName" => "../pChart/fonts/pf_arma_five.ttf", "FontSize" => 8));
 
         $Settings = array("Pos" => SCALE_POS_LEFTRIGHT
             , "Mode" => SCALE_MODE_FLOATING
@@ -337,12 +318,12 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
         $Config = array("DisplayValues" => 1);
         $myPicture->drawSplineChart($Config);
 
-        $Config = array("FontR" => 0, "FontG" => 0, "FontB" => 0, "FontName" => "./pChart/fonts/pf_arma_five.ttf", "FontSize" => 8, "Margin" => 6, "Alpha" => 30, "BoxSize" => 5, "Style" => LEGEND_NOBORDER
+        $Config = array("FontR" => 0, "FontG" => 0, "FontB" => 0, "FontName" => "../pChart/fonts/pf_arma_five.ttf", "FontSize" => 8, "Margin" => 6, "Alpha" => 30, "BoxSize" => 5, "Style" => LEGEND_NOBORDER
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(842, 16, $Config);
 
-        $myPicture->Render("./images/".$nomGraph.".png");
+        $myPicture->Render("../images/".$nomGraph.".png");
 
 
     }
@@ -502,13 +483,23 @@ function rechercheDoc($recherche)
 function includeAllRequiredFiles()
 {
     //Fichier pChart pour la créaion d'un graphique
-    include("./pChart/class/pData.class.php");
-    include("./pChart/class/pDraw.class.php");
-    include("./pChart/class/pImage.class.php");
-    include("./pChart/class/pCache.class.php");
+    include("../pChart/class/pData.class.php");
+    include("../pChart/class/pDraw.class.php");
+    include("../pChart/class/pImage.class.php");
+    include("../pChart/class/pCache.class.php");
     //fichier de Connexion à la BDD Mysql
-    include('./util/dbconnect.inc.php');
+    include('../util/dbconnect.inc.php');
     //On récupére et on vérifie
-    include('./util/verification.php');
+    //include('../util/verification.php');
 }//fin includeAllRequiredFiles
+
+function getConnection()
+{
+        $resDbImp = mysql_connect(
+            getServerSql(), 
+            getCompteBase(), 
+            getPswdBase()) 
+            or die(mysql_error());
+        mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
+}
 ?>

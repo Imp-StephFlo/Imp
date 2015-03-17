@@ -1,6 +1,7 @@
 <?php
-error_reporting();
+include('./util/dbconnect.php');
 require_once("./util/fonctions.php");
+getConnection();
 include ("./vues/entete.php");
 $actionsPossibles = array("accueil", "moyenne" , "perso" , "stat" , "rechercher");
 

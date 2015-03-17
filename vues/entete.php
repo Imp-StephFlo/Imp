@@ -15,6 +15,8 @@
         <title>Gestion Impressions</title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <link href="./css/styles.css" rel="stylesheet" type="text/css" />
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script src="./js/monjs.js"></script>
     </head>
     <body style=" leftmargin: 0px; topmargin: 0px; marginwidth: 0px; marginheight: 0px;">
         <!-- Save for Web Slices (endless_blue.psd) -->
