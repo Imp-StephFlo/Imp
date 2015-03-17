@@ -1,11 +1,10 @@
 <?php
 //include des fichiers nécéssaires
-includeAllRequiredFiles();
+//includeAllRequiredFiles();
 ?>
 <!--Contenue du corps du tableau-->
     <tr>
     <!--Debut du formulaire-->
-    <form action='index.php?action=perso<?php echo $code ; ?>' method='POST'>
       <td rowspan="5">
         <img src="./images/index_17.jpg" width="33" height="463" alt="" />
       </td>
@@ -24,10 +23,11 @@ includeAllRequiredFiles();
               <div class="h1">Impressions Personnelles</div>
                   <br />
                   <div class="content_statL"> 
+                      <input type="hidden" id="code" name="code" value="<?php echo $code; ?>" />
                       <!--3 boutons radio, le mois est selectionné pas défaut-->
-                      <input type='radio' id='pj' name='Periode' value='jour'/><label for='pj'> Jour</label> &nbsp;
-                      <input type='radio' id='pm' name='Periode' value='mois' checked/><label for='pm'> Mois</label> &nbsp;
-                      <input type='radio' id='pa' name='Periode' value='annee'/><label for='pa'> Ann&eacute;e</label> &nbsp;
+                      <input type='radio' id='pj' name='periode' value='jour'/><label for='pj'> Jour</label> &nbsp;
+                      <input type='radio' id='pm' name='periode' value='mois' checked/><label for='pm'> Mois</label> &nbsp;
+                      <input type='radio' id='pa' name='periode' value='annee'/><label for='pa'> Ann&eacute;e</label> &nbsp;
                       <br /><br/>
                       <!--Liste déroulante pour choisir avoir quoi la courbe personnelle va être comparer-->
                       <SELECT name="comparer" size="1">
@@ -36,102 +36,14 @@ includeAllRequiredFiles();
                             <OPTION value="autre">Al&eacute;atoire
                             <!--<OPTION value="service">M&ecirc;me service
                             <OPTION value="fonction">M&ecirc;me fonction-->
-                            </SELECT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <input type="submit" id="valider" value="Valider"/>
-<?php                      
-//*************Enregistrement du graphique*************
-
-//Récuperation du champs radio et celui de la liste déroulante (Periode + comparer)
-    if(isset($_POST['Periode']) and $code!="" and isset($_POST['comparer'])) //Si les variables periode, code et comparer existe on peut faire le graphique
-         {
-            //Variables
-            $periode=$_POST['Periode']; //On récupére la période envoyer
-            $Code=$_GET['code']; //On récupére le code dans l'url
-            $choix=$_POST['comparer'];//On récupére le choix de comparaison de la liste déroulante
-            
-            $nomGraph=$Code;//On donne comme nom de graph le code utilisateur (pour l'instant
-            
-            //Création de 2 variables qui contiendra les résultats de la requete 
-            $periodeT = array();
-            $somme = array();
-            
-            //Fonction pour récupérer le résultat moyen selon la periode voulu
-            $resultSomme=StatPerso($Code,$periode);
-            
-            //Rangement des résultats dans les tableaux
-            $i=0;
-            while ($row = mysql_fetch_array($resultSomme, MYSQL_NUM)) 
-                {
-                    $periodeT[$i] = $row[0];
-                    $somme[$i] = floor($row[1]);
-                    $i++;
-                }
-            
-            //On regarde si on doit ajouter une autre courbe donc récupérer des résultats d'une requete
-            if($choix=="moyenne")//Si l'utilisateur à choisi de comparer avec la courbe moyenne
-            {
-                //Creation d'un tableau qui contiendra les donnée qui serviront de comparaison avec la courbe des stat perso
-                $courbe = array();
-                
-                //Fonction pour récupérer le résultat moyen selon la periode voulu
-                $resultMoyenne=StatMoyen($periode);
-                
-                //Rangement des résultats dans les tableaux
-                $i=0;
-                while ($row = mysql_fetch_array($resultMoyenne, MYSQL_NUM)) 
-                {
-                    $courbe[$i] = floor($row[1]/44);
-                    $i++;
-                }
-                
-                //Appel de la fonction pour créer le graphique
-                graphiqueCourbes($periodeT,$somme,$courbe,"Periode","Mes impressons","moyenne",$nomGraph);
-
-            }elseif ($choix=="autre") //Si l'utilisateur a décider de comparer avec un agent aléatoirement (pour l'instant)
-                {
-                    //Creation d'un tableau qui contiendra les donnée qui serviront de comparaison avec la courbe des stat perso
-                    $courbe = array();
-                    $codesT=array();
-                    
-                    //Recherche d'un code user dans la base gérer aléatoriement par une fonction
-                    $codeAutre=codeAléa($Code);
-                    //echo ($codeAutre);
-                    //
-                    //Fonction pour récupérer le résultat somme d'un agent 
-                    $resultSommeAutre=StatPerso($codeAutre,$periode);
-                    
-                    //Rangement des résultats dans les tableaux
-                    $i=0;
-                    while ($row = mysql_fetch_array($resultSommeAutre, MYSQL_NUM)) 
-                        {
-                            $courbe[$i] = floor($row[1]);
-                            $i++;
-                        }
-                    //on créer le graphique 
-                    graphiqueCourbes($periodeT, $somme, $courbe, "Période","Mes Impressions", "un agent", $nomGraph);
-         
-                }
-                else//L'utilisateur à choisi ou laissé par defaut c'est à dire que sa courbe personnelle
-                {
-                //Appel de la fonction pour créer le graphique
-                graphiqueCourbe($periodeT,$somme,'Periode','Mes impressions',$nomGraph);
-                
-                }
-                
-                //Ce echo permet d'insérer le graph et d'en faire un zoom lorsqu'on clique dessus.
-                echo "<section class='image'>
+                      </SELECT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <a href="#" data-role="button" id="btnperso" class="bouton">Valider</a>
+                      <section class='image'>
                         <figure tabindex='1' contenteditable='true'>
-                            <img src='./images/".$nomGraph.".png' width='462' height='200' alt='' contenteditable='false' />
+                            <div id="divgraphique"></div>
                         </figure>
-                      </section>";
-                
-                
-         }
-
-?>               
+                      </section>
           </div>
-          <!--</div>
-            </form>-->
       </td>
       <td rowspan="5">
 	<img src="./images/index_20.jpg" width="108" height="463" alt="" />

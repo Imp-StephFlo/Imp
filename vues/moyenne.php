@@ -1,7 +1,4 @@
-<?php
-//include des fichiers nécéssaires
-includeAllRequiredFiles();
-?>
+
 <!--Contenue du corps du tableau-->
     <!--Debut de la 1ere ligne du tableau en-tete-->
     <tr>

@@ -4,7 +4,7 @@ require_once('../util/fonctions.php');
 includeAllRequiredFiles();
 getConnection();
 //Récupération des variables
-$code       = $_REQUEST['code'];
+$code       = substr($_REQUEST['code'],6);
 $periode    = $_REQUEST['periode'];
 //Création de 2 variables qui contiendra les résultats de la requete 
 $periodeT = array();
@@ -23,8 +23,8 @@ while ($row = mysql_fetch_array($resultMoyenne, MYSQL_NUM))
 //Appel de la fonction pour créer le graphique
 
 //===> graphiqueCourbe($periodeT, $moyenne, 'Periode', 'Moyenne', 'NomDuGraphique');
-graphiqueCourbe($periodeT,$moyenne,'Periode','Moyenne',substr($code,6), $periode);
+graphiqueCourbe($periodeT,$moyenne,'Periode','Moyenne',$code.$periode);
 //Retourne le code de l'utilisateur, qui est également le nom du graphique (le fichier image)
 //echo '<img src="./images/'.$code.'.png" id="graphique" name="graphique" width="462" height="200" alt="" contenteditable="false" />'
 
-echo '<img src="./images/'.substr($code,6).$periode.'.png" id="graphique" name="graphique" width="462" height="200" alt="" contenteditable="false" />';
+echo '<img src="./images/'.$code.$periode.'.png" id="graphique" name="graphique" width="462" height="200" alt="" contenteditable="false" />';

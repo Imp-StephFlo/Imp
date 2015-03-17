@@ -21,7 +21,7 @@ function verifCode ($Code)
 }//fin verifCode
             
 //Fonction recherche un code user aléatoirement
-function codeAléa ($Code)
+function codeAlea ($Code)
 {
     
     $alea=rand(0, 5);
@@ -53,6 +53,7 @@ function codeAléa ($Code)
 //cette fonction retourne les résultats d'une requete par utilisateur et selon la periode demander
 function statPerso($strCode,$periode)
 {
+    //echo "je suis dans la fonction.";
     
     if($periode=="mois")//Fais une requete classer par mois
     {
@@ -62,13 +63,15 @@ function statPerso($strCode,$periode)
         . "\n"
         . "WHERE\n"
         . "tl.iduser = tu.id AND\n"
-        . "tu.code = \"" . $strCode . "\" AND\n"
-        . "tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 365 DAY) AND\n" // On prend seulement les dates sur 1 ans ( de maintenant à il y a 2 ans)
+        . "tu.code ='" . $strCode ."' AND\n"
+        . "tl.date > DATE_SUB('2014-05-19', INTERVAL 365 DAY) AND\n" // On prend seulement les dates sur 1 ans ( de maintenant à il y a 2 ans)
         . "1\n"
         . "\n"
         . "GROUP BY month( date ), year( date ) \n"
         . "ORDER BY year( date ), month( date )\n"   
         . "LIMIT 0 , 30";
+        
+        //echo $strReqSomme;
         
         //Exécution de la requete
         $resultSomme = mysql_query($strReqSomme);
@@ -76,7 +79,6 @@ function statPerso($strCode,$periode)
             {
                 die('Requête invalide : ' . mysql_error());
             }
-
         return $resultSomme;
         
     }
@@ -130,7 +132,7 @@ function statPerso($strCode,$periode)
             }
 }
 
-function StatMoyen($periode)
+function statMoyen($periode)
 {
     if($periode=="mois")// moyenne par mois des impressions 
     {
@@ -208,7 +210,7 @@ function StatMoyen($periode)
 }
 
 //Création de graphique avec une courbe et deux tableaux (abscisse et ordonnée)
-function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph, $periode)
+function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph)
     {
         //Construction du graphique
         $myData = new pData();
@@ -260,14 +262,16 @@ function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph, $periode)
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(752, 16, $Config);
-
-        $myPicture->Render("../images/".$nomGraph.$periode.".png");
-    }
+        
+        $lienImage = "./images/".$nomGraph.".png";
+        $myPicture->Render(".".$lienImage);
+        return $lienImage;
+    }//fin graphiqueCourbe
 
     //Création d'un graphique avec 2 courbes et donc 3 tableaux
-function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2, $nomGraph )
-        
+function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2, $nomGraph)
     {
+    
         //Construction du graphique
         $myData = new pData();
         /* Save the data in the pData array */
@@ -278,11 +282,11 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
         $myData->setSerieDescription($nomA, $nomA);
         $myData->setSerieOnAxis($nomA, 0);
 
-        $myData->setSerieDescription($nomO1, $nomO1);//Legende de la 2eme courbe
+        $myData->setSerieDescription($nomO1, $nomO1);//Legende de la 1eme courbe
         $myData->setSerieOnAxis($nomO1, 0);
                 
         $myData->addPoints($courbe2, $nomO2);
-        $myData->setSerieDescription($nomO2, $nomO2); //Legende de la 1ere courbe
+        $myData->setSerieDescription($nomO2, $nomO2); //Legende de la 2ere courbe
         $myData->setSerieOnAxis($nomO2, 0);// on indique a combien on commance l'axe des ordonnés
 
         //On indique que représente l'axe des absices
@@ -322,11 +326,11 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(842, 16, $Config);
-
-        $myPicture->Render("../images/".$nomGraph.".png");
-
-
-    }
+        //echo "CHEMIN ::::". getcwd();
+        $lienImage = "./images/".$nomGraph.".png";
+        $myPicture->Render(".".$lienImage);
+        return $lienImage;
+}
     
 // ---------------------------------------------------------------------
 //  Générer un mot de passe aléatoire
@@ -487,10 +491,6 @@ function includeAllRequiredFiles()
     include("../pChart/class/pDraw.class.php");
     include("../pChart/class/pImage.class.php");
     include("../pChart/class/pCache.class.php");
-    //fichier de Connexion à la BDD Mysql
-    include('../util/dbconnect.inc.php');
-    //On récupére et on vérifie
-    //include('../util/verification.php');
 }//fin includeAllRequiredFiles
 
 function getConnection()
