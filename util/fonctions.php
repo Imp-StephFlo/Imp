@@ -262,7 +262,9 @@ function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph)
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(752, 16, $Config);
-        
+        // ATTENTION, il faut que pChart génère l'image dans "../images/" mais on retourne "./images" 
+        // avec un SEUL et UNIQUE point car le fichier ajax n'est pas dans le même répertoire que 
+        // pChart lors de son exécution
         $lienImage = "./images/".$nomGraph.".png";
         $myPicture->Render(".".$lienImage);
         return $lienImage;
@@ -327,6 +329,9 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
         );
         $myPicture->drawLegend(842, 16, $Config);
         //echo "CHEMIN ::::". getcwd();
+        // ATTENTION, il faut que pChart génère l'image dans "../images/" mais on retourne "./images" 
+        // avec un SEUL et UNIQUE point car le fichier ajax n'est pas dans le même répertoire que 
+        // pChart lors de son exécution
         $lienImage = "./images/".$nomGraph.".png";
         $myPicture->Render(".".$lienImage);
         return $lienImage;

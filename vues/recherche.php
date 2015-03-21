@@ -1,11 +1,4 @@
 <?php
-include ("./include/debut.inc.php");
-//Ajout de la connexion à la BDD
-include ("./include/dbconnect.inc.php");
-//Ajout de la liste des fonctions
-include ("./include/fonctions.inc.php");
-//On récupére et on vérifie
-include('./include/verification.inc.php');
 
 //Initialisation de la variable erreur
 //$erreur = " "
