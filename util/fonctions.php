@@ -400,75 +400,38 @@ function modifBDD()
         }   
 }
 
-function nbImpressions($Code,$periode)
+/**
+ * Retourne le nombre de pages imprimées par l'utilisateur, dont le code est celui passé en 1er paramètre, sur la période correspondant au 2ème paramètre
+ * @param type $code String - Le code de l'utilisateur
+ * @param type $periode {'jour','mois','year'} - La période désirée
+ * @return type Integer - Le nombre de pages imprimées
+ */
+function nbImpressions($code,$periode)
 {
-    //Impressions selon la période
-    if($periode=="mois")
+    //En fonction de la période, on défini la condition (clause where) sur la date de la requete
+    switch ($periode)
     {
-        //Requete
-        $requete= 
-        "SELECT sum( pages ) as total \n"
-        . "FROM `t_log` AS tl, `t_user` AS tu\n"
-        . "WHERE\n"
-        . "tl.iduser = tu.id AND\n"
-        . "tu.code = \"" . $Code . "\" AND\n"
-        . "tl.date = month (\"2014-05-19\") AND\n" // On prend seulement sur ce mois-ci
-        . "1\n";
-        
-        //On execute la requete
-        $resultat=  mysql_query($requete);
-        
-        //On extrait le résultat
-        $total=mysql_fetch_array($resultat);
-        
-        //On retourne le résultat
-        return $total;
-        
-    }elseif ($periode=="jour") 
-        {
-            //Requete
-            $requete= 
-            "SELECT sum( pages ) as total \n"
-            . "FROM `t_log` AS tl, `t_user` AS tu\n"
-            . "WHERE\n"
-            . "tl.iduser = tu.id AND\n"
-            . "tu.code = \"" . $Code . "\" AND\n"
-            . "tl.date = NOW() AND\n" // On prend seulement sur ce mois-ci
-            . "1\n";
-
-            //On execute la requete
-            $resultat=  mysql_query($requete);
-
-            //On extrait le résultat
-            $total=mysql_fetch_array($resultat);
-
-            //On retourne le résultat
-            return $total;
-            
-        }else
-            {
-            //Requete
-            $requete= 
-            "SELECT sum( pages ) as total \n"
-            . "FROM `t_log` AS tl, `t_user` AS tu\n"
-            . "WHERE\n"
-            . "tl.iduser = tu.id AND\n"
-            . "tu.code = \"" . $Code . "\" AND\n"
-            . "tl.date = year(\"2014-05-19\") AND\n" // On prend seulement sur ce mois-ci
-            . "1\n";
-
-            //On execute la requete
-            $resultat=  mysql_query($requete);
-
-            //On extrait le résultat
-            $total=mysql_fetch_array($resultat);
-
-            //On retourne le résultat
-            return $total;
-            
-            }
-    
-}
+        case 'mois':
+            $whereCode = 'month (\"2014-05-19\")';
+            break;
+        case 'jour':
+            $whereCode = 'NOW()';
+            break;
+        default:
+            $whereCode = 'year(\"2014-05-19\")';
+            break;
+    }//fin switch
+    //On initialise une variable contenant le texte de la requete
+    $requete  = "SELECT sum( pages ) as total \n"
+                . "FROM `t_log` AS tl, `t_user` AS tu\n"
+                . "WHERE\n"
+                . "tl.iduser = tu.id AND\n"
+                . "tu.code = \"" . $code . "\" AND\n"
+                . "tl.date = ".$whereCode." AND\n" // On prend seulement sur ce mois-ci
+                . "1\n";
+    //On retourne le résultat après avoir extrait le résultat après avoir exécuté la requete
+    return mysql_fetch_array(mysql_query($requete));
+}//fin nbImpressions
 
 function rechercheDoc($recherche)
 {
@@ -483,11 +446,11 @@ function rechercheDoc($recherche)
     
     //On retourne le résultat
     return $resultatSql;
-}
+}//fin rechercheDoc
 
 
 /**
- * Permet d'include tous les fichiers nécéssaires en une ligne
+ * Permet d'include tous les fichiers de pChart nécéssaires à la génération de graphes
  */
 function includeAllRequiredFiles()
 {
@@ -498,6 +461,9 @@ function includeAllRequiredFiles()
     include("../pChart/class/pCache.class.php");
 }//fin includeAllRequiredFiles
 
+/**
+ * Établi la connection avec mysql et selectionne la base de donnée nécéssaire
+ */
 function getConnection()
 {
         $resDbImp = mysql_connect(
@@ -506,5 +472,5 @@ function getConnection()
             getPswdBase()) 
             or die(mysql_error());
         mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
-}
+}//fin getConnection
 ?>

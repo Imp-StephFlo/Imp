@@ -1,17 +1,16 @@
-<!--Contenue du corps du tableau-->
+<!--Contenu du corps du tableau-->
     <tr>
     <!--Debut du formulaire-->
-      
-      <td rowspan="5">
-        <img src="./images/index_17.jpg" width="33" height="463" alt="" />
-      </td>
+            <td rowspan="5">
+              <img src="./images/index_17.jpg" width="33" height="463" alt="" />
+            </td>
             <td colspan="11">
                 <div id="left_content_image"><br />
                       <div class="h2"><br /></div>
                       <br />
                       <div class="content_statR">
                           P&eacute;riode:<br /><br />
-                      </div> 
+                      </div>
                 </div>
             </td>
                 
@@ -24,56 +23,8 @@
                           <input type='radio' id='pj' name='periode' value='jour'/><label for='pj'> Jour</label> &nbsp;
                           <input type='radio' id='pm' name='periode' value='mois' checked/><label for='pm'> Mois</label> &nbsp;
                           <input type='radio' id='pa' name='periode' value='annee'/><label for='pa'> Ann&eacute;e</label> &nbsp;
-                          <a href="#" data-role="button" id="btnstat" class="bouton">Valider</a><br /><br />
-                            <?php
-    if(isset($max) and $periode=="mois")
-    {
-                            ?>
-                            <p>
-                                Maximum : <?php echo $max?> pages imprim&eacute;es, au mois de <?php echo $dateMax?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMax?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMax?> arbres.</span><br /><br />
-                                Minimum : <?php echo $min?> pages imprim&eacute;es, au mois de <?php echo $dateMin?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMini?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMin?> arbres.</span><br /><br /><br />
-                                <!--Ce mois-ci, vous en étes à <?php echo $total?> pages imprim&eacute;es.<br />-->
-                            </p>
-            
-<?php
-    }//fin if(isset($max) and $periode=="mois")
-    elseif (isset($max) and $periode=="annee") 
-    {
-?> 
-                            <p>
-                                Maximum : <?php echo $max?> pages imprim&eacute;es, dans l'ann&eacute;e <?php echo $dateMax?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMax?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMax?> arbres.</span><br /><br />
-                                Minimum : <?php echo $min?> pages imprim&eacute;es, dans l'ann&eacute;e <?php echo $dateMin?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMini?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMin?> arbres.</span><br /><br /><br />
-                                <!--Cette année, vous en étes à <?php echo $total?> pages imprim&eacute;es.<br />-->
-                            </p>    
-                            
-                          
-                            <?php
-                          
-                                            }elseif (isset($max) and $periode=="jour")
-                                            {
-                            ?>                    
-                            <p>
-                                Maximum : <?php echo $max?> pages imprim&eacute;es, le <?php echo $dateMax?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMax?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMax?> arbres.</span><br /><br />
-                                Minimum : <?php echo $min?> pages imprim&eacute;es, le <?php echo $dateMin?> .<br />
-                                <span class="marge">Co&ucirc;tent: <?php echo $coutMini?> euros.</span><br />
-                                <span class="marge">Abat: <?php echo $coutArbMin?> arbres.</span><br /><br /><br />
-                                <!--Hier, vous avez imprim&eacute;e <?php echo $total?> page(s).<br />-->
-                            </p> 
-                          
-                          
-                            <?php                    
-                                            }
-                            ?>
+                          <a href="#" data-role="button" id="btnstat" class="bouton">Valider</a>
+                          <div id="zoneStats"></div>
                        </div>
                 </div>     
                 

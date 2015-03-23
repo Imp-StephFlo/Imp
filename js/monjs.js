@@ -49,12 +49,18 @@ $(function()
                 //Annulation de l'effet normal de la balise <a href...>
                 e.preventDefault();
                 e.stopPropagation();
+                
                 //Récupération des valeurs et appel au fichier ajax
                 $.post("./ajax/calculerStatistiques.php",
                         {
-                            "periode"   : $("input[type=radio][name=periode]:checked").attr('value')
+                            "periode"   : $("input[type=radio][name=periode]:checked").attr('value'),
+                            "code"      : $("#code").val()
                         },
                         foncRetourCalculStats
                 );
     });
+    
+    function foncRetourCalculStats(data){
+        $("#zoneStats").html(data);
+    }//fin foncRetourCalculStats
 });

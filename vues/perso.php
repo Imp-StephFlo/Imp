@@ -1,8 +1,4 @@
-<?php
-//include des fichiers nécéssaires
-//includeAllRequiredFiles();
-?>
-<!--Contenue du corps du tableau-->
+<!--Contenu du corps du tableau-->
     <tr>
     <!--Debut du formulaire-->
       <td rowspan="5">
