@@ -63,4 +63,26 @@ $(function()
     function foncRetourCalculStats(data){
         $("#zoneStats").html(data);
     }//fin foncRetourCalculStats
+    
+    /******************************************************************************************* 
+     * Fonction appelée lorsqu'on clique sur le bouton "Valider" du formulaire "Rechercher.php"
+     **************************************************************************************** */
+    $("#btnrechercher").click(function(e) {
+                //Annulation de l'effet normal de la balise <a href...>
+                e.preventDefault();
+                e.stopPropagation();
+                
+                //Récupération des valeurs et appel au fichier ajax
+                $.post("./ajax/rechercherUnDocument.php",
+                        {
+                            "titre" : $("#titreD").val()
+                        },
+                        foncRetourRecherche
+                );
+    });
+    
+    function foncRetourRecherche(data){
+        alert(data);
+        $("#resultatRecherche").html(data);
+    }//fin foncRetourRecherche
 });
