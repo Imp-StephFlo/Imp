@@ -25,7 +25,7 @@ if(strlen($recherche) < $caracMin)
 //On créer le tableau s'il n'y a pas d'erreur
 if(!isset($erreur))
 {
-    echo '
+    $affichage = '
                         <div class="divConteneur">
                             <table class="t1" summary="documents qui répondes à la recherche de l\'user">
                               <thead>
@@ -48,7 +48,7 @@ if(!isset($erreur))
         $pages[$i] = $row[2];
         $noms[$i] = $row[1];
         $dates[$i] = $row[0];
-        echo"
+        $affichage .= "
                                             <tr>
                                                 <th>".$pages[$i]."</th>
                                                 <td>".$noms[$i]."</td>
@@ -59,41 +59,19 @@ if(!isset($erreur))
 
     if($i == 0)
     {
-        echo "<tr><th colspan='4'>Aucun Document trouv&eacute;...</th></tr> ";
+        $affichage .= "<tr><th colspan='4'>Aucun Document trouv&eacute;...</th></tr> ";
     }
 
-    echo "
+    $affichage .= "
                               </tbody> 
                             </table>
-                        </div>";
-    echo"<br /><div id='resultat'> R&eacute;sultat(s) trouv&eacute;(s): ".$i.".</div>";
+                        </div>
+                        <br /><div id='resultat'> R&eacute;sultat(s) trouv&eacute;(s): ".$i.".</div>";
 }//fin if(!isset($erreur))
 else
 {
-    echo '<div id="affiner"> 
+    $affichage = '<div id="affiner"> 
             '.$erreur.'
           </div>';
 }//fin else
-
-//On créer le tableaux s'il n'y a pas d'erreur
-if(!isset($erreur))
-{
-    echo '
-                        <div class="divConteneur">
-                            <table class="t1" summary="documents qui répondes à la recherche de l\'user"> 
-                              <!--<caption>Liste des Documents trouv&eacute;s</caption> -->
-                              <thead> 
-                                  <tr>
-                                      <th>Nb Pages</th>
-                                      <th>Titre document</th>
-                                      <th>Dates Impressions</th>
-                                  </tr>
-                              </thead> 
-                              <tfoot> 
-                                  <tr>
-                                      <th colspan="4"></th>
-                                  </tr> 
-                              </tfoot> 
-                              <tbody>';
-}//fin if(!isset($erreur))
-?>
+echo $affichage;
