@@ -39,20 +39,18 @@ switch ($comparaison)
         //Appel de la fonction pour créer le graphique
         $lienImage = graphiqueCourbes($periodeT,$somme,$courbe,"Periode","Mes impressons","moyenne",$code.$periode.$comparaison);
         break;
-    case "autre":
+    case "service":
         //Creation d'un tableau qui contiendra les donnée qui serviront de comparaison avec la courbe des stat perso
         $courbe = array();
-        $codesT = array();
-
-        //Recherche d'un code user dans la base gérer aléatoriement par une fonction
+        
         $codeAutre = codeAlea($code);
-        //echo ($codeAutre);
-        //
-        //Fonction pour récupérer le résultat somme d'un agent 
-        $resultSommeAutre=statPerso($codeAutre,$periode);
-
+        
+        //Recherche d'un code user du meme service dans la base trouver aléatoriement par une fonction
+        //Fonction pour récupérer le résultat somme d'un agent
+        $resultSommeAutre = StatPerso($codeAutre, $periode);
+                    
         //Rangement des résultats dans les tableaux
-        $i=0;
+        $i = 0;
         while ($row = mysql_fetch_array($resultSommeAutre, MYSQL_NUM)) 
         {
             $courbe[$i] = floor($row[1]);

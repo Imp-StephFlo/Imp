@@ -29,9 +29,7 @@
                       <SELECT name="comparer" size="1">
                             <OPTION selected value="">- - - 
                             <OPTION value="moyenne">La moyenne
-                            <OPTION value="autre">Al&eacute;atoire
-                            <!--<OPTION value="service">M&ecirc;me service
-                            <OPTION value="fonction">M&ecirc;me fonction-->
+                            <OPTION value="service">M&ecirc;me service
                       </SELECT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       <a href="#" data-role="button" id="btnperso" class="bouton">Valider</a>
                       <section class='image'>

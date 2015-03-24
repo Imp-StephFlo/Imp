@@ -1,4 +1,17 @@
 <?php
+/**
+ * Établi la connection avec mysql et selectionne la base de donnée nécéssaire
+ */
+function getConnection()
+{
+        $resDbImp = mysql_connect(
+            getServerSql(), 
+            getCompteBase(), 
+            getPswdBase()) 
+            or die(mysql_error());
+        mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
+}//fin getConnection
+
 //Fonction qui vas permette la vérification de code utilisateur dans la base de donnée Mysql
 function verifCode ($Code)
 {
@@ -20,15 +33,30 @@ function verifCode ($Code)
     }//fin else
 }//fin verifCode
             
+//Foncion qui va permettre la récupération du code service d'un user
+function codeService($Code)
+{
+    //Creation de la requete
+        $requete="SELECT service FROM t_user WHERE code ='".$Code."';";
+
+        //Exécution de la requete
+        $resultat = mysql_query($requete);
+
+        //On extrait le résultat
+        $reste=  mysql_fetch_array($resultat);
+
+        //On retourne le résultat
+        return $reste;
+}
+
 //Fonction recherche un code user aléatoirement
 function codeAlea ($Code)
 {
-    
-    $alea=rand(0, 5);
-    //echo $alea;
+    //On recupére le code service de l'user
+    $service = codeService($Code);
     //
     //On recherche tout les code user autre que celui saisie
-    $requete="SELECT code FROM t_user WHERE code !='".$Code."' AND code !=''";
+    $requete="SELECT code FROM t_user WHERE code !='".$Code."' AND code !='' and service=".$service[0];
     //echo $requete;
     
     //Exécution de la requete
@@ -44,9 +72,8 @@ function codeAlea ($Code)
             $codesT[$i] = $row[0];
             $i++;
         }
-    
+    $alea=rand(0, $i-1);
     return $codesT[$alea];
-    
 }
 
 //Fonctions qui retourne les résultats d'une requete sql dans des tableaux
@@ -460,17 +487,4 @@ function includeAllRequiredFiles()
     include("../pChart/class/pImage.class.php");
     include("../pChart/class/pCache.class.php");
 }//fin includeAllRequiredFiles
-
-/**
- * Établi la connection avec mysql et selectionne la base de donnée nécéssaire
- */
-function getConnection()
-{
-        $resDbImp = mysql_connect(
-            getServerSql(), 
-            getCompteBase(), 
-            getPswdBase()) 
-            or die(mysql_error());
-        mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
-}//fin getConnection
 ?>

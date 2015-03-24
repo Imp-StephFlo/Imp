@@ -82,7 +82,6 @@ $(function()
     });
     
     function foncRetourRecherche(data){
-        alert(data);
         $("#resultatRecherche").html(data);
     }//fin foncRetourRecherche
 });
