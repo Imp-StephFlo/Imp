@@ -10,7 +10,7 @@ $periode    = $_REQUEST['periode'];
 $periodeT = array();
 $moyenne = array();
 //Fonction pour récupérer le résultat moyen selon la periode voulu
-$resultMoyenne=StatMoyen($periode);
+$resultMoyenne=statMoyen($periode);
 //Rangement des résultats dans les tableaux
 $i=0;
 while ($row = mysql_fetch_array($resultMoyenne, MYSQL_NUM)) 

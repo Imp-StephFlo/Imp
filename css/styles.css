@@ -313,7 +313,7 @@ box-shadow: 1px 1px 10px black inset, 0 1px 0 rgba( 255, 255, 255, 0.4) ;
  .bouton, .bouton:hover {
     padding: 3px 15px;
     border-radius: 4px;
-    color: #555555;
+    color: black;
     text-decoration: none;
     font-size: 15px;
 }
@@ -324,6 +324,6 @@ box-shadow: 1px 1px 10px black inset, 0 1px 0 rgba( 255, 255, 255, 0.4) ;
  }
  
  .bouton:hover {
-    background: linear-gradient(#E6F8FF 0%, #D6F3FF 30%, #85C8FF 50%, #9ED3FF 100%);
+    background: linear-gradient(#b1cde2 0%, #a0bbce 30%, #859cac 50%, #7a919f 100%);
     border: solid 1px #1567AB;
  }

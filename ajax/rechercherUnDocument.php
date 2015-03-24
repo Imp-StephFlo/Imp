@@ -19,7 +19,7 @@ $pages      = array();
 //On définit le message d'erreur si le critère de recherche est inférieur à 5 caractères
 if(strlen($recherche) < $caracMin)
 {
-    $erreur = "Veuillez saisir au minimum 5 caract&eagrave;res.";
+    $erreur = "Veuillez saisir au minimum 5 caract&egrave;res.";
 }//fin strlen
 
 //On créer le tableau s'il n'y a pas d'erreur
