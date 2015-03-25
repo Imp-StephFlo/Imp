@@ -3,13 +3,14 @@ include('../util/dbconnect.php');
 require_once('../util/fonctions.php');
 getConnection();    //On établi la connexion à la bdd
 //On récupère la valeur du formulaire
-$recherche  = $_REQUEST["titre"];
+$recherche      = $_REQUEST["titre"];
+$typeDocument   = $_REQUEST["typeDocument"];
 
 //On doit écrire au minimum 5 caractères 
 $caracMin   = 5;
 
 //On utilise une fonction pour rechercher les documents qui composent cette recherche avec leurs dates et le nombre de pages
-$resultat   = rechercheDoc($recherche);
+$resultat   = rechercheDoc($recherche, $typeDocument);
 
 //Création de 3 tableaux qui vont contenir le nom, la date et le nombre de pages des documents trouvés
 $date       = array();

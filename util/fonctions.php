@@ -4,11 +4,9 @@
  */
 function getConnection()
 {
-        $resDbImp = mysql_connect(
-            getServerSql(), 
-            getCompteBase(), 
-            getPswdBase()) 
-            or die(mysql_error());
+        $resDbImp = mysql_connect(  getServerSql(), 
+                                    getCompteBase(), 
+                                    getPswdBase()   ) or die(mysql_error());
         mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
 }//fin getConnection
 
@@ -460,14 +458,24 @@ function nbImpressions($code,$periode)
     return mysql_fetch_array(mysql_query($requete));
 }//fin nbImpressions
 
-function rechercheDoc($recherche)
+function rechercheDoc($recherche, $typeDocument)
 {
     //On adapte la variable recherche pour la requete sql
     //On remplace les espace pas de %
     $rechercheSql=str_replace(' ','%',$recherche);
     //Requete sql 
-    $requete="select date, nom, pages from t_log where nom like '%".$rechercheSql."%';";
-
+    $requete="select date, nom, pages from t_log where nom like '%".$rechercheSql."%'";
+    
+    //Si le type de document est différent de null, on va ajouter une condition dans la requete
+    if($typeDocument != "null")
+    {
+        $requete .= " and format=".$typeDocument." ;";
+    }//fin if
+    else    //sinon on rajoute un ';' pour fermer la requête
+    {
+        $requete .= ";";
+    }//fin else
+    
     //On excute la requete
     $resultatSql=  mysql_query($requete);
     
@@ -487,4 +495,17 @@ function includeAllRequiredFiles()
     include("../pChart/class/pImage.class.php");
     include("../pChart/class/pCache.class.php");
 }//fin includeAllRequiredFiles
+
+/**
+ * Génère les balises "<option>" de la liste déroulante "critereRecherche" dans l'onglet "Rechercher"
+ */
+function getCriteresFormat()
+{
+    $arrListeFormats = mysql_query("select * from t_type where id<>5");
+    
+    while ($row = mysql_fetch_array($arrListeFormats))
+    {
+        echo '                          <option value="'.$row[0].'">'.$row[1].'</option>';
+    }//fin while
+}
 ?>

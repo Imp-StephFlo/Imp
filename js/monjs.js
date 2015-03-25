@@ -75,7 +75,8 @@ $(function()
                 //Récupération des valeurs et appel au fichier ajax
                 $.post("./ajax/rechercherUnDocument.php",
                         {
-                            "titre" : $("#titreD").val()
+                            "titre"         : $("#titreD").val(),
+                            "typeDocument"  : $("select[name='typeDocument'] > option:selected").attr('value')
                         },
                         foncRetourRecherche
                 );

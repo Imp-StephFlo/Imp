@@ -11,11 +11,12 @@
       </td>
       <td colspan="11">
           <div id="left_content_image"><br />
-              <div class="h2"><br /></div>
-              <br />
-              <div class="content_statR">
-              <label for='titreD'> Titre du document : </label><br /><br />
-              </div>   
+                <div class="h2"><br /></div>
+                <br />
+                <div class="content_statR">
+                    <label for='titreD'> Titre du document : </label><br /><br />
+                    Type de document : 
+                </div>
           </div>
       </td>
       <td colspan="8" rowspan="3">
@@ -24,7 +25,11 @@
                   <br />
                   <div class="content_statL">
                       <input type='search' id='titreD' name='titre' placeholder='Veuillez entrer un titre'/>
-                      <a href="#" data-role="button" id="btnrechercher" class="bouton">Rechercher</a>
+                      <a href="#" data-role="button" id="btnrechercher" class="bouton">Rechercher</a><br />
+                      <select name="typeDocument" size="1">
+                          <option selected value="null">- - -</option>
+                          <?php getCriteresFormat(); ?>
+                      </select>
                       <div id="resultatRecherche"></div>
                   </div>
           </div>
