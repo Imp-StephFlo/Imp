@@ -21,7 +21,7 @@ create table t_serveur (
 create table t_hote (
 	id int(11) not null,
 	nom varchar(64),
-	constraint pk_t_hote primary key()
+	constraint pk_t_hote primary key(id)
 );
 
 
