@@ -26,7 +26,9 @@
                             <div class="h1">Bienvenue</div>
                             <br />
                             <div class="content"> Pr&eacutesentation :<br /><br />
-                            A FAIRE...<br />
+                            Il s'agit d'un site, qui vous permet à vous agents de la DDCS
+                            de visualiser sous forme de graphiques et de 
+                            statistiques votre consommation d'impressions.
                             </div>
                         </div>
                     </td>

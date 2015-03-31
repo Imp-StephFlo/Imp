@@ -4,11 +4,9 @@
  */
 function getConnection()
 {
-        $resDbImp = mysql_connect(
-            getServerSql(), 
-            getCompteBase(), 
-            getPswdBase()) 
-            or die(mysql_error());
+        $resDbImp = mysql_connect(  getServerSql(), 
+                                    getCompteBase(), 
+                                    getPswdBase()   ) or die(mysql_error());
         mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
 }//fin getConnection
 
@@ -20,13 +18,13 @@ function verifCode ($Code)
     else
     {
         //Creation de la requete
-        $requete="select * from t_user where code='".$Code."';";
+        $requete = "select * from t_user where code='".$Code."';";
 
         //Exécution de la requete
         $resultat = mysql_query($requete);
 
         //On extrait le résultat
-        $reste=  mysql_fetch_row($resultat);
+        $reste = mysql_fetch_row($resultat);
 
         //On retourne le résultat
         return $reste;
@@ -433,7 +431,7 @@ function modifBDD()
  * @param type $periode {'jour','mois','year'} - La période désirée
  * @return type Integer - Le nombre de pages imprimées
  */
-function nbImpressions($code,$periode)
+/*function nbImpressions($code,$periode)
 {
     //En fonction de la période, on défini la condition (clause where) sur la date de la requete
     switch ($periode)
@@ -458,16 +456,26 @@ function nbImpressions($code,$periode)
                 . "1\n";
     //On retourne le résultat après avoir extrait le résultat après avoir exécuté la requete
     return mysql_fetch_array(mysql_query($requete));
-}//fin nbImpressions
+}//fin nbImpressions*/
 
-function rechercheDoc($recherche)
+function rechercheDoc($recherche, $typeDocument)
 {
     //On adapte la variable recherche pour la requete sql
     //On remplace les espace pas de %
     $rechercheSql=str_replace(' ','%',$recherche);
     //Requete sql 
-    $requete="select date, nom, pages from t_log where nom like '%".$rechercheSql."%';";
-
+    $requete="select date, nom, pages from t_log where nom like '%".$rechercheSql."%'";
+    
+    //Si le type de document est différent de null, on va ajouter une condition dans la requete
+    if($typeDocument != "null")
+    {
+        $requete .= " and format=".$typeDocument." ;";
+    }//fin if
+    else    //sinon on rajoute un ';' pour fermer la requête
+    {
+        $requete .= ";";
+    }//fin else
+    
     //On excute la requete
     $resultatSql=  mysql_query($requete);
     
@@ -487,4 +495,17 @@ function includeAllRequiredFiles()
     include("../pChart/class/pImage.class.php");
     include("../pChart/class/pCache.class.php");
 }//fin includeAllRequiredFiles
+
+/**
+ * Génère les balises "<option>" de la liste déroulante "critereRecherche" dans l'onglet "Rechercher"
+ */
+function getCriteresFormat()
+{
+    $arrListeFormats = mysql_query("select * from t_type where id<>5");
+    
+    while ($row = mysql_fetch_array($arrListeFormats))
+    {
+        echo '                          <option value="'.$row[0].'">'.$row[1].'</option>';
+    }//fin while
+}
 ?>

@@ -7,7 +7,8 @@ $code       = $_REQUEST['code'];
 $periode    = $_REQUEST['periode'];
 
 //recherche de la somme d'impression selon la période choisi ainsi que la date du jour
-$total      = nbImpressions($_REQUEST['code'],$periode);
+//$total      = nbImpressions($_REQUEST['code'],$periode);
+$total      = statPerso($_REQUEST['code'],$periode);
 
 switch($periode)
 {
