@@ -11,9 +11,9 @@ $periode        = $_REQUEST['periode'];
 $periodeT = array();
 $somme = array();
 //Fonction pour récupérer le résultat moyen selon la periode voulu
-$resultSomme=statPerso($code,$periode);
+$resultSomme = statPerso($code,$periode);
 //Rangement des résultats dans les tableaux
-$i=0;
+$i = 0;
 while ($row = mysql_fetch_array($resultSomme, MYSQL_NUM)) 
 {
     $periodeT[$i] = $row[0];

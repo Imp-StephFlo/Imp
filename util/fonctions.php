@@ -10,7 +10,11 @@ function getConnection()
         mysql_select_db(getNomBase(), $resDbImp) or die("Erreur sql : ".mysql_error());
 }//fin getConnection
 
-//Fonction qui vas permette la vérification de code utilisateur dans la base de donnée Mysql
+/**
+ * Retourne l'utilisateur correspondant au code passé en paramètre
+ * @param String Le code de l'utilisateur
+ * @return MySQL_Array Le résultat de la requête
+ */
 function verifCode ($Code)
 {
     if($Code == "")
@@ -18,225 +22,186 @@ function verifCode ($Code)
     else
     {
         //Creation de la requete
-        $requete="select * from t_user where code='".$Code."';";
+        $requete = "select * from t_user where code='".$Code."';";
 
         //Exécution de la requete
         $resultat = mysql_query($requete);
 
         //On extrait le résultat
-        $reste=  mysql_fetch_row($resultat);
+        $reste =  mysql_fetch_row($resultat);
 
         //On retourne le résultat
         return $reste;
     }//fin else
 }//fin verifCode
-            
-//Foncion qui va permettre la récupération du code service d'un user
+
+/**
+ * Retourne le code service correspondant au code d'un utilisateur
+ * @param String Le code de l'utilisateur
+ * @return String Le code service
+ */
 function codeService($Code)
 {
     //Creation de la requete
-        $requete="SELECT service FROM t_user WHERE code ='".$Code."';";
+    $requete = "SELECT service FROM t_user WHERE code ='".$Code."';";
 
-        //Exécution de la requete
-        $resultat = mysql_query($requete);
+    //Exécution de la requete
+    $resultat = mysql_query($requete);
 
-        //On extrait le résultat
-        $reste=  mysql_fetch_array($resultat);
+    //On extrait le résultat
+    $reste=  mysql_fetch_array($resultat);
 
-        //On retourne le résultat
-        return $reste;
-}
+    //On retourne le résultat
+    return $reste;
+}//fin codeService
 
-//Fonction recherche un code user aléatoirement
-function codeAlea ($Code)
+/**
+ * Retourne un code d'utilisateur au hasard parmis ceux du même service que celui passé en paramètre
+ * @param String Le code de l'utilisateur
+ * @return String Le code aléatoire récupéré dans la bdd
+ */
+function codeAlea ($strCode)
 {
     //On recupére le code service de l'user
-    $service = codeService($Code);
-    //
+    $arrService = codeService($strCode);
+    
     //On recherche tout les code user autre que celui saisie
-    $requete="SELECT code FROM t_user WHERE code !='".$Code."' AND code !='' and service=".$service[0];
-    //echo $requete;
+    $requete="SELECT code FROM t_user WHERE code !='".$strCode."' AND code !='' and service=".$arrService[0];
     
     //Exécution de la requete
     $resultat = mysql_query($requete);
     
     //Création d'un tableau qui va contenir les codes
-    $codesT=array();
+    $arrCodesT=array();
     
     //Rangement des résultats dans les tableaux
     $i=0;
     while ($row = mysql_fetch_array($resultat))
-        {
-            $codesT[$i] = $row[0];
-            $i++;
-        }
-    $alea=rand(0, $i-1);
-    return $codesT[$alea];
-}
+    {
+        $arrCodesT[$i] = $row[0];
+        $i++;
+    }//fin while
+    $intAlea = rand(0, $i-1);
+    return $arrCodesT[$intAlea];
+}//fin codeAlea
 
-//Fonctions qui retourne les résultats d'une requete sql dans des tableaux
-//cette fonction retourne les résultats d'une requete par utilisateur et selon la periode demander
-function statPerso($strCode,$periode)
+/**
+ * Retourne la liste des données permettant de calculer les statistiques personnelles
+ * @param String Le code de l'utilisateur
+ * @param String La période {'jour','mois','annee'}
+ * @return MySQL_Array La liste des données
+ */
+function statPerso($strCode,$strPeriode)
 {
     //echo "je suis dans la fonction.";
-    
-    if($periode=="mois")//Fais une requete classer par mois
+    //En fonction de la période, on va modifier les termes de la requete à exécuter
+    switch ($strPeriode)
     {
-        //Requete qui calcul la somme d'impressions effectuer par mois par un utilisateur
-        $strReqSomme = "SELECT concat( DATE_FORMAT( date, '%m' ) , \"-\", DATE_FORMAT( date, '%y' ) ) as periode , sum( pages ) as somme, tu.nom\n"
-        . "FROM `t_log` AS tl, `t_user` AS tu\n"
-        . "\n"
-        . "WHERE\n"
-        . "tl.iduser = tu.id AND\n"
-        . "tu.code ='" . $strCode ."' AND\n"
-        . "tl.date > DATE_SUB('2014-05-19', INTERVAL 365 DAY) AND\n" // On prend seulement les dates sur 1 ans ( de maintenant à il y a 2 ans)
-        . "1\n"
-        . "\n"
-        . "GROUP BY month( date ), year( date ) \n"
-        . "ORDER BY year( date ), month( date )\n"   
-        . "LIMIT 0 , 30";
+        case "mois":
+            $strSelect = "concat( DATE_FORMAT( date, '%m' ) , \"-\", DATE_FORMAT( date, '%y' ) ) as periode, sum( pages ) as somme";
+            $strWhereInterval = " AND tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 365 DAY)";
+            $strGroupBy = "month( date ) , year( date )";
+            $strOrderBy = " ORDER by year( date ) , month( date )";
+            break;
+        case "jour":
+            $strSelect = "concat( day(date) , \"-\", DATE_FORMAT( date, '%m' ) ) as periode , sum( pages ) as somme";
+            $strWhereInterval = " AND tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 30 DAY)";
+            $strGroupBy = "day( date ),  month( date )";
+            $strOrderBy = " ORDER by month(date), day( date )";
+            break;
+        default:
+            $strSelect = "concat( 20, DATE_FORMAT( date, '%y' )) as periode, sum( pages ) as somme";
+            $strWhereInterval = "";
+            $strGroupBy = "year( date )";
+            $strOrderBy = "";
+            break;
+    }//fin switch
+    
+    //Initialisation de la requete
+    $strReqMoyenne =  "SELECT " . $strSelect
+                    . " FROM `t_log` AS tl "
+                    . " INNER JOIN `t_user` AS tu on tl.iduser=tu.id "
+                    . " WHERE `date` > '1' "
+                    . " AND tu.code ='" . $strCode ."' "
+                    . $strWhereInterval
+                    . " GROUP by " . $strGroupBy
+                    . $strOrderBy . ";";
         
-        //echo $strReqSomme;
-        
-        //Exécution de la requete
-        $resultSomme = mysql_query($strReqSomme);
-        if (!$resultSomme) 
-            {
-                die('Requête invalide : ' . mysql_error());
-            }
-        return $resultSomme;
-        
-    }
-    elseif ($periode=="jour")//Calcul par jours les impressions
-        {
-            //Requete qui calcul la somme d'impressions effectuer par jours par un utilisateur
-            $strReqSomme = "SELECT concat( day( date ) , \"-\", DATE_FORMAT( date, '%m' ) ) as periode , sum( pages ) as somme, tu.nom\n"
-            . "FROM `t_log` AS tl, `t_user` AS tu\n"
-            . "\n"
-            . "WHERE\n"
-            . "tl.iduser = tu.id AND\n"
-            . "tu.code = \"" . $strCode . "\" AND\n"
-            . "tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 15 DAY) AND\n" // On prend seulement sur un interval de 15 jours 
-            . "1\n"
-            . "\n"
-            . "GROUP BY day( date ), month( date )\n"
-            . "ORDER BY month( date ), day( date )\n"       
-            . "LIMIT 0 , 30";
+    //Exécution de la requete
+    $result = mysql_query($strReqMoyenne);
+    
+    //Si la requête n'a rien retourné, on affiche une erreur
+    if (!$result) 
+    {
+        die('Requête invalide : ' . mysql_error());
+    }//fin if
+    
+    return $result;
+}//fin statPerso
 
-            //Exécution de la requete
-            $resultSomme = mysql_query($strReqSomme);
-            if (!$resultSomme) 
-                {
-                    die('Requête invalide : ' . mysql_error());
-                }
-
-            return $resultSomme;
-        }
-        else//calcule les impressions par ans
-            {
-                //Requete qui calcul la somme d'impressions effectuer par ans par un utilisateur
-                $strReqSomme = "SELECT concat( 20, DATE_FORMAT( date, '%y' )) as periode , sum( pages ) as somme, tu.nom\n"
-                . "FROM `t_log` AS tl, `t_user` AS tu\n"
-                . "\n"
-                . "WHERE\n"
-                . "tl.iduser = tu.id AND\n"
-                . "tu.code = \"" . $strCode . "\" AND\n"
-                . "1\n"
-                . "\n"
-                . "GROUP BY year( date )\n"
-                . "LIMIT 0 , 30";
-
-                //Exécution de la requete
-                $resultSomme = mysql_query($strReqSomme);
-                if (!$resultSomme) 
-                    {
-                        die('Requête invalide : ' . mysql_error());
-                    }
-
-                return $resultSomme;
-            }
-}
-
-function statMoyen($periode)
+/**
+ * Retourne la liste des données permettant de calculer les statistiques
+ * @param String La période {'jour','mois','annee'}
+ * @return MySQL_Array La liste des données
+ */
+//nombreImpression
+function statMoyen($strPeriode)
 {
-    if($periode=="mois")// moyenne par mois des impressions 
+    //En fonction de la période, on va modifier les termes de la requete à exécuter
+    switch ($strPeriode)
     {
-        
-        //Requete permettant de récupérer la nb de pages imprimées par mois
-        $strReqMoyenne = "SELECT\n"
-        . " concat( DATE_FORMAT( date, '%m' ) , \"-\", DATE_FORMAT( date, '%y' ) ) as periode ,\n"
-        . " sum( pages ) as somme\n"
-        . "FROM\n"
-        . " `t_log` AS tl, `t_user` AS tu\n"
-        . "WHERE \n"
-        . " tl.iduser=tu.id AND\n"
-        . "tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 365 DAY) AND\n" //seulement sur 1 ans
-        . "  `date` > '1'\n"
-        . "GROUP by month( date ) , year( date )\n"
-        . "ORDER by year( date ) , month( date )";
-        
-        
-        //Exécution de la requete
-        $resultMoyenne = mysql_query($strReqMoyenne);
-        
-        if (!$resultMoyenne) 
-            {
-            die('Requête invalide : ' . mysql_error());
-            }
-       
-        return $resultMoyenne;
-          
-    }
-    elseif($periode=='jour')//moyenne des impressions par jour
-        {
-            //Requete permettant de récupérer la nb de pages imprimées par mois
-                $strReqMoyenne = "SELECT concat( day(date) , \"-\", DATE_FORMAT( date, '%m' ) ) as periode , sum( pages ) as somme\n"
-                . "FROM\n"
-                . " `t_log` AS tl, `t_user` AS tu\n"
-                . "WHERE \n"
-                . " tl.iduser=tu.id AND\n"
-                . "tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 30 DAY) AND\n" //seulement les 30 dernier jours
-                . "  `date` > '1'\n"
-                . "GROUP by day( date ),  month( date )\n"
-                . "ORDER BY month(date), day( date )";
-
-                //Exécution de la requete
-            $resultMoyenne = mysql_query($strReqMoyenne);
-            if (!$resultMoyenne) 
-                {
-                    die('Requête invalide : ' . mysql_error());
-                }
-
-            return $resultMoyenne;
-        }
-        else//sinon par ans
-            {
-                //Requete permettant de récupérer la nb de pages imprimées par mois
-                $strReqMoyenne = "SELECT\n"
-                . " concat( 20, DATE_FORMAT( date, '%y' )) as periode ,\n"
-                . " sum( pages ) as somme\n"
-                . "FROM\n"
-                . " `t_log` AS tl, `t_user` AS tu\n"
-                . "WHERE \n"
-                . " tl.iduser=tu.id AND\n"
-                . "  `date` > '1'\n"
-                . "GROUP by year( date )";
-
-                //Exécution de la requete
-                $resultMoyenne = mysql_query($strReqMoyenne);
-                if (!$resultMoyenne) 
-                    {
-                    die('Requête invalide : ' . mysql_error());
-                    }
-                return $resultMoyenne;
- 
-            }
+        case "mois":
+            $strSelect = "concat( DATE_FORMAT( date, '%m' ) , \"-\", DATE_FORMAT( date, '%y' ) ) as periode, sum( pages ) as somme";
+            $strWhereInterval = " AND tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 365 DAY)";
+            $strGroupBy = "month( date ) , year( date )";
+            $strOrderBy = " ORDER by year( date ) , month( date )";
+            break;
+        case "jour":
+            $strSelect = "concat( day(date) , \"-\", DATE_FORMAT( date, '%m' ) ) as periode , sum( pages ) as somme";
+            $strWhereInterval = " AND tl.date > DATE_SUB(\"2014-05-19\", INTERVAL 30 DAY)";
+            $strGroupBy = "day( date ),  month( date )";
+            $strOrderBy = " ORDER by month(date), day( date )";
+            break;
+        default:
+            $strSelect = "concat( 20, DATE_FORMAT( date, '%y' )) as periode, sum( pages ) as somme";
+            $strWhereInterval = "";
+            $strGroupBy = "year( date )";
+            $strOrderBy = "";
+            break;
+    }//fin switch
     
-}
-
-//Création de graphique avec une courbe et deux tableaux (abscisse et ordonnée)
-function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph)
+    //Initialisation de la requete
+    $strReqMoyenne =  "SELECT " . $strSelect
+                    . " FROM `t_log` AS tl "
+                    . " INNER JOIN `t_user` AS tu on tl.iduser=tu.id "
+                    . " WHERE `date` > '1' "
+                    . $strWhereInterval
+                    . " GROUP by " . $strGroupBy
+                    . $strOrderBy . ";";
+        
+    //Exécution de la requete
+    $result = mysql_query($strReqMoyenne);
+    
+    //Si la requête n'a rien retourné, on affiche une erreur
+    if (!$result) 
     {
+        die('Requête invalide : ' . mysql_error());
+    }//fin if
+    
+    return $result;
+}//fin statMoyen
+
+/**
+ * Génère un graphique avec une seule courbe
+ * @param type $abscisse
+ * @param type $ordonne
+ * @param type $nomA
+ * @param type $nomO
+ * @param type $nomGraph
+ * @return String Lien vers l'image générée
+ */
+function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph)
+{
         //Construction du graphique
         $myData = new pData();
         /* Save the data in the pData array */
@@ -293,12 +258,21 @@ function graphiqueCourbe($abscisse, $ordonne, $nomA, $nomO, $nomGraph)
         $lienImage = "./images/".$nomGraph.".png";
         $myPicture->Render(".".$lienImage);
         return $lienImage;
-    }//fin graphiqueCourbe
+}//fin graphiqueCourbe
 
-    //Création d'un graphique avec 2 courbes et donc 3 tableaux
+/**
+ * Génère un graphique avec 2 courbes
+ * @param type $abscisse
+ * @param type $courbe1
+ * @param type $courbe2
+ * @param type $nomA
+ * @param type $nomO1
+ * @param type $nomO2
+ * @param type $nomGraph
+ * @return String Lien vers l'image générée
+ */
 function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2, $nomGraph)
-    {
-    
+{
         //Construction du graphique
         $myData = new pData();
         /* Save the data in the pData array */
@@ -353,97 +327,104 @@ function graphiqueCourbes ($abscisse, $courbe1, $courbe2, $nomA, $nomO1, $nomO2,
             , "Mode" => LEGEND_HORIZONTAL
         );
         $myPicture->drawLegend(842, 16, $Config);
-        //echo "CHEMIN ::::". getcwd();
+        
         // ATTENTION, il faut que pChart génère l'image dans "../images/" mais on retourne "./images" 
         // avec un SEUL et UNIQUE point car le fichier ajax n'est pas dans le même répertoire que 
         // pChart lors de son exécution
         $lienImage = "./images/".$nomGraph.".png";
         $myPicture->Render(".".$lienImage);
         return $lienImage;
-}
-    
-// ---------------------------------------------------------------------
-//  Générer un mot de passe aléatoire
-// ---------------------------------------------------------------------
-function genererMDP ($longueur = 8)
+}//fin graphiqueCourbes
+
+/**
+ * Génère un mot de passe aléatoire
+ * @param Integer La longueur du mot de passe
+ * @return String Le mot de passe généré aléatoirement
+ */
+function genererMDP ($intLongueur = 8)
 {
     // initialiser la variable $mdp
-    $mdp = "";
+    $strMdp = "";
  
     // Définir tout les caractères possibles dans le mot de passe,
     // Il est possible de rajouter des voyelles ou bien des caractères spéciaux
-    $possible = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $strPossible = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
  
     // obtenir le nombre de caractères dans la chaîne précédente
     // cette valeur sera utilisé plus tard
-    $longueurMax = strlen($possible);
- 
-    if ($longueur > $longueurMax) 
-        {
-        $longueur = $longueurMax;
-        }
+    $intLongueurMax = strlen($strPossible);
+    
+    if ($intLongueur > $intLongueurMax) 
+    {
+        $intLongueur = $intLongueurMax;
+    }//fin if
  
     // initialiser le compteur
     $i = 0;
     // ajouter un caractère aléatoire à $mdp jusqu'à ce que $longueur soit atteint
-    while ($i < $longueur) {
+    while ($i < $intLongueur)
+    {
         // prendre un caractère aléatoire
-        $caractere = substr($possible, mt_rand(0, $longueurMax-1), 1);
+        $strCaractere = substr($strPossible, mt_ran(0, $intLongueurMax-1), 1);
  
         // vérifier si le caractère est déjà utilisé dans $mdp
-        if (!strstr($mdp, $caractere)) {
+        if (!strstr($strMdp, $strCaractere))
+        {
             // Si non, ajouter le caractère à $mdp et augmenter le compteur
-            $mdp .= $caractere;
+            $strMdp .= $strCaractere;
             $i++;
-        }
-    }
+        }//fin if
+    }//fin while
     // retourner le résultat final
-    return $mdp;
-}
+    return $strMdp;
+}//fin genererMDP
 
+/**
+ * Attribut un code aléatoire à tous les utilisateur n'en ayant pas
+ */
 function modifBDD()
 {
     //Rechercher les nom d'user qui on pas de code
-    $requete="select nom from t_user where code=''";
+    $requete  = "select nom from t_user where code=''";
     
     //On execute la requete
-    $resultat=  mysql_query($requete);
+    $resultat = mysql_query($requete);
     
     //Création d'un tableau qui va contenir les codes
-    $userVide=array();
+    $arrUserVide = array();
     
     //Rangement des résultats dans les tableaux
-    $i=0;
-    while ($row = mysql_fetch_array($resultat))
-        {
-            //recuperation d'un code
-            $newCode=genererMDP();
-            $userVide[$i] = $row[0];
-            //Requete d'ajout d'un code à chaque agent qui n'on pas de code 
-            mysql_query("UPDATE t_user SET code='".$newCode."' WHERE nom = '".$userVide[$i]."'");
-            $i++;
-        }   
-}
+    $i = 0;
+    while($row = mysql_fetch_array($resultat))
+    {
+        //recuperation d'un code
+        $strNewCode         = genererMDP();
+        $arrUserVide[$i]    = $row[0];
+        //Requete d'ajout d'un code à chaque agent qui n'on pas de code 
+        mysql_query("UPDATE t_user SET code='".$strNewCode."' WHERE nom = '".$arrUserVide[$i]."'");
+        $i++;
+    }//fin while
+}//fin modifBDD
 
 /**
  * Retourne le nombre de pages imprimées par l'utilisateur, dont le code est celui passé en 1er paramètre, sur la période correspondant au 2ème paramètre
- * @param type $code String - Le code de l'utilisateur
- * @param type $periode {'jour','mois','year'} - La période désirée
- * @return type Integer - Le nombre de pages imprimées
+ * @param String Le code de l'utilisateur
+ * @param String La période désirée - {'jour','mois','year'}
+ * @return Integer Le nombre de pages imprimées
  */
-function nbImpressions($code,$periode)
+function nbImpressions($intCode,$strPeriode)
 {
     //En fonction de la période, on défini la condition (clause where) sur la date de la requete
-    switch ($periode)
+    switch ($strPeriode)
     {
         case 'mois':
-            $whereCode = 'month (\"2014-05-19\")';
+            $strWhereDate = 'month (\"2014-05-19\")';
             break;
         case 'jour':
-            $whereCode = 'NOW()';
+            $strWhereDate = 'NOW()';
             break;
         default:
-            $whereCode = 'year(\"2014-05-19\")';
+            $strWhereDate = 'year(\"2014-05-19\")';
             break;
     }//fin switch
     //On initialise une variable contenant le texte de la requete
@@ -451,20 +432,23 @@ function nbImpressions($code,$periode)
                 . "FROM `t_log` AS tl, `t_user` AS tu\n"
                 . "WHERE\n"
                 . "tl.iduser = tu.id AND\n"
-                . "tu.code = \"" . $code . "\" AND\n"
-                . "tl.date = ".$whereCode." AND\n" // On prend seulement sur ce mois-ci
+                . "tu.code = \"" . $intCode . "\" AND\n"
+                . "tl.date = ".$strWhereDate." AND\n" // On prend seulement sur ce mois-ci
                 . "1\n";
     //On retourne le résultat après avoir extrait le résultat après avoir exécuté la requete
     return mysql_fetch_array(mysql_query($requete));
 }//fin nbImpressions
 
+/**
+ * Retourne le résultat de la recherche de documents
+ * @param String Contenu de la zone de recherche
+ * @param Integer Code du type de document
+ * @return Mysql_Array Résultat de la requête.
+ */
 function rechercheDoc($recherche, $typeDocument)
 {
-    //On adapte la variable recherche pour la requete sql
-    //On remplace les espace pas de %
-    $rechercheSql=str_replace(' ','%',$recherche);
-    //Requete sql 
-    $requete="select date, nom, pages from t_log where nom like '%".$rechercheSql."%'";
+    //On créer la requete, en adaptant la variable recherche pour la requete sql (On remplace les espace pas de %)
+    $requete = "select date, nom, pages from t_log where nom like '%".str_replace(' ','%',$recherche)."%'";
     
     //Si le type de document est différent de null, on va ajouter une condition dans la requete
     if($typeDocument != "null")
@@ -475,14 +459,10 @@ function rechercheDoc($recherche, $typeDocument)
     {
         $requete .= ";";
     }//fin else
-    
-    //On excute la requete
-    $resultatSql=  mysql_query($requete);
-    
-    //On retourne le résultat
-    return $resultatSql;
+    //
+    //On retourne le résultat de la requete
+    return mysql_query($requete);
 }//fin rechercheDoc
-
 
 /**
  * Permet d'include tous les fichiers de pChart nécéssaires à la génération de graphes
@@ -507,5 +487,5 @@ function getCriteresFormat()
     {
         echo '                          <option value="'.$row[0].'">'.$row[1].'</option>';
     }//fin while
-}
+}//fin getCriteresFormat
 ?>
