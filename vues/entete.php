@@ -5,11 +5,11 @@
 <?php
     //on regarde s'il y a qu'elle que chose dans l'url
     //variable de base
-    $code="";
+    $strCode="";
         if(isset ($_GET['code'])) //s'il y a un code
         {
             //*********on regarde si le code existe dans la base
-            $code="&code=".$_GET['code']; //variable à inséré dans l'url
+            $strCode="&code=".$_GET['code']; //variable à inséré dans l'url
         }//fin if
 ?>
         <title>Gestion Impressions</title>
@@ -53,7 +53,7 @@
                         <div class="top_menu">
                             <ul>
                                 <li>
-                                    <a href='./index.php?action=accueil<?php echo $code;?>'>Presentation</a>
+                                    <a href='./index.php?action=accueil<?php echo $strCode;?>'>Presentation</a>
                                 </li>
                             </ul>
                          </div>
@@ -65,7 +65,7 @@
                         <div class="top_menu">
                             <ul>
                                 <li>
-                                    <a href='./index.php?action=moyenne<?php echo $code;?>'>Global</a>
+                                    <a href='./index.php?action=moyenne<?php echo $strCode;?>'>Global</a>
                                 </li>
                             </ul>
                         </div>
@@ -77,7 +77,7 @@
                         <div class="top_menu">
                             <ul>
                                 <li>
-                                    <a href='./index.php?action=perso<?php echo $code;?>'>Personnel</a>
+                                    <a href='./index.php?action=perso<?php echo $strCode;?>'>Personnel</a>
                                 </li>
                             </ul>
                         </div>
@@ -89,7 +89,7 @@
                         <div class="top_menu">
                             <ul>
                                 <li>
-                                    <a href='./index.php?action=stat<?php echo $code;?>'>Statistiques</a>
+                                    <a href='./index.php?action=stat<?php echo $strCode;?>'>Statistiques</a>
                                 </li>
                             </ul>
                         </div>
@@ -101,7 +101,7 @@
                         <div class="top_menu">
                             <ul>
                                 <li>
-                                    <a href='./index.php?action=rechercher<?php echo $code;?>'>Rechercher</a>
+                                    <a href='./index.php?action=rechercher<?php echo $strCode;?>'>Rechercher</a>
                                 </li>
                             </ul>
                         </div>
