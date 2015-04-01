@@ -28,7 +28,7 @@ function verifCode ($Code)
         $resultat = mysql_query($requete);
 
         //On extrait le résultat
-        $reste =  mysql_fetch_row($resultat);
+        $reste = mysql_fetch_row($resultat);
 
         //On retourne le résultat
         return $reste;
@@ -437,7 +437,7 @@ function nbImpressions($intCode,$strPeriode)
                 . "1\n";
     //On retourne le résultat après avoir extrait le résultat après avoir exécuté la requete
     return mysql_fetch_array(mysql_query($requete));
-}//fin nbImpressions
+}//fin nbImpressions*/
 
 /**
  * Retourne le résultat de la recherche de documents
@@ -445,9 +445,9 @@ function nbImpressions($intCode,$strPeriode)
  * @param Integer Code du type de document
  * @return Mysql_Array Résultat de la requête.
  */
-function rechercheDoc($recherche, $typeDocument)
+function rechercheDoc($strRecherche, $intTypeDocument)
 {
-    //On créer la requete, en adaptant la variable recherche pour la requete sql (On remplace les espace pas de %)
+    //On créer la requete, en adaptant la variable recherche pour la requete sql (On remplace les espace par des %)
     $requete = "select date, nom, pages from t_log where nom like '%".str_replace(' ','%',$recherche)."%'";
     
     //Si le type de document est différent de null, on va ajouter une condition dans la requete
@@ -459,7 +459,7 @@ function rechercheDoc($recherche, $typeDocument)
     {
         $requete .= ";";
     }//fin else
-    //
+    
     //On retourne le résultat de la requete
     return mysql_query($requete);
 }//fin rechercheDoc
@@ -487,5 +487,6 @@ function getCriteresFormat()
     {
         echo '                          <option value="'.$row[0].'">'.$row[1].'</option>';
     }//fin while
+
 }//fin getCriteresFormat
 ?>

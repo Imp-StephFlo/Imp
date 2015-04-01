@@ -19,7 +19,7 @@
                       <div class="h1">Statistiques</div>
                       <br />
                       <div class="content_statL">
-                          <input type="hidden" id="code" name="code" value="<?php echo substr($code,6); ?>" />
+                          <input type="hidden" id="code" name="code" value="<?php echo substr($strCode,6); ?>" />
                           <input type='radio' id='pj' name='periode' value='jour'/><label for='pj'> Jour</label> &nbsp;
                           <input type='radio' id='pm' name='periode' value='mois' checked/><label for='pm'> Mois</label> &nbsp;
                           <input type='radio' id='pa' name='periode' value='annee'/><label for='pa'> Ann&eacute;e</label> &nbsp;
