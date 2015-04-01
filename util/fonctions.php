@@ -1,6 +1,6 @@
 <?php
 /**
- * Établi la connection avec mysql et selectionne la base de donnée nécéssaire
+ * Établit la connection avec mysql et selectionne la base de donnée nécéssaire
  */
 function getConnection()
 {
