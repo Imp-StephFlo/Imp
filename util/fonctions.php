@@ -448,12 +448,12 @@ function nbImpressions($intCode,$strPeriode)
 function rechercheDoc($strRecherche, $intTypeDocument)
 {
     //On créer la requete, en adaptant la variable recherche pour la requete sql (On remplace les espace par des %)
-    $requete = "select date, nom, pages from t_log where nom like '%".str_replace(' ','%',$recherche)."%'";
+    $requete = "select date, nom, pages from t_log where nom like '%".str_replace(' ','%',$strRecherche)."%'";
     
     //Si le type de document est différent de null, on va ajouter une condition dans la requete
-    if($typeDocument != "null")
+    if($intTypeDocument != "null")
     {
-        $requete .= " and format=".$typeDocument." ;";
+        $requete .= " and format=".$intTypeDocument." ;";
     }//fin if
     else    //sinon on rajoute un ';' pour fermer la requête
     {
